@@ -1,5 +1,5 @@
 import { AlertCircle, CheckCircle2, LoaderCircle, X } from 'lucide-react'
-import { createContext, useCallback, useContext, useMemo, useState, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from 'react'
 
 export function Button({ className = '', children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button className={`button ${className}`} {...props}>{children}</button>
@@ -45,10 +45,19 @@ export function useToast() {
 }
 
 export function Modal({ title, children, onClose, wide = false }: { title: string; children: ReactNode; onClose: () => void; wide?: boolean }) {
+  const dialog = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    dialog.current?.focus()
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose() }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', closeOnEscape) }
+  }, [onClose])
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className={`modal ${wide ? 'modal-wide' : ''}`} role="dialog" aria-modal="true" aria-label={title} onMouseDown={(event) => event.stopPropagation()}>
-        <header className="modal-header"><h2>{title}</h2><button className="icon-button" onClick={onClose} aria-label="Close dialog"><X size={20} /></button></header>
+      <section ref={dialog} tabIndex={-1} className={`modal ${wide ? 'modal-wide' : ''}`} role="dialog" aria-modal="true" aria-label={title} onMouseDown={(event) => event.stopPropagation()}>
+        <header className="modal-header"><h2>{title}</h2><button type="button" className="icon-button" onClick={onClose} aria-label="Close dialog"><X size={20} /></button></header>
         <div className="modal-body">{children}</div>
       </section>
     </div>

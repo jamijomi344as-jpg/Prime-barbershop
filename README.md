@@ -12,6 +12,10 @@ The secured React admin dashboard and its required migration are documented in [
 
 The dynamic public website, secure anonymous booking-session architecture, and required migration are documented in [docs/PHASE_3_CUSTOMER_WEBSITE.md](docs/PHASE_3_CUSTOMER_WEBSITE.md).
 
+## Phase 3.5: production audit
+
+The local audit evidence, security hardening migration, and live Supabase verification checklist are in [docs/PHASE_3_5_PRODUCTION_AUDIT.md](docs/PHASE_3_5_PRODUCTION_AUDIT.md).
+
 ```bash
 cp .env.example .env
 # Add only VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
