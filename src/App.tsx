@@ -2,6 +2,7 @@ import { AlertTriangle, LockKeyhole, LogIn, ShieldCheck } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { PublicWebsite } from './customer/PublicWebsite'
 import { AdminShell } from './components/AdminShell'
 import { Button, LoadingBlock, ToastProvider, useToast } from './components/ui'
 import { errorMessage } from './lib/format'
@@ -17,7 +18,7 @@ import { SchedulesPage } from './pages/SchedulesPage'
 type AccessState = 'loading' | 'authorized' | 'unauthenticated' | 'unauthorized'
 
 export function App() {
-  return <ToastProvider><AdminRouter/></ToastProvider>
+  return <ToastProvider><Routes><Route path="/admin/*" element={<AdminRouter/>}/><Route path="/*" element={<PublicWebsite/>}/></Routes></ToastProvider>
 }
 
 function AdminRouter() {
