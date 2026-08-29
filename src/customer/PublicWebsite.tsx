@@ -46,10 +46,10 @@ export function PublicWebsite() {
   const toggleService = (service: Service) => setSelected((current) => current.some((item) => item.id === service.id) ? current.filter((item) => item.id !== service.id) : [...current, service])
   const openBooking = (barberId?: string | null) => { if (barberId) setPreferredBarberId(barberId); setBookingOpen(true) }
 
-  if (!isSupabaseConfigured) return <PublicConfigurationState/>
+  if (!isSupabaseConfigured) return <PublicConfigurationState reason="missing-env"/>
   if (loading) return <PublicLoading/>
   if (error || !data) return <PublicError error={error ?? 'Unable to load public business data.'} retry={() => void reload()}/>
-  if (!data.settings) return <PublicConfigurationState/>
+  if (!data.settings) return <PublicConfigurationState reason="empty-settings"/>
 
   const page = location.pathname.replace(/^\//, '') || 'home'
   const home = page === 'home'
@@ -168,7 +168,12 @@ function SectionHeading({ eyebrow, title, description }: { eyebrow: string; titl
 function PublicSkeleton({ count }: { count: number }) { return <div className="public-skeletons">{Array.from({ length: count }).map((_, index) => <span key={index}/>)}</div> }
 function PublicLoading() { return <div className="public-site"><PublicSkeleton count={4}/></div> }
 function PublicError({ error, retry }: { error: string; retry: () => void }) { return <div className="public-site public-state"><ErrorState message={error} retry={retry}/></div> }
-function PublicConfigurationState() { return <div className="public-site public-state"><EmptyState title="Website setup is in progress" description="The public data connection has not been configured yet."/></div> }
+function PublicConfigurationState({ reason }: { reason: 'missing-env' | 'empty-settings' }) {
+  if (reason === 'empty-settings') {
+    return <div className="public-site public-state"><EmptyState title="Website setup is in progress" description="Business settings have not been published yet. An administrator can create the first record from the admin panel."/></div>
+  }
+  return <div className="public-site public-state"><EmptyState title="Website setup is in progress" description="The public data connection has not been configured yet."/></div>
+}
 function customerError(error: unknown) { const text = errorMessage(error, 'Не удалось выполнить действие. Попробуйте ещё раз.'); if (/slot|available|overlap|23P01/i.test(text)) return 'Это время только что заняли. Пожалуйста, выберите другое время.'; return text }
 function weekdayLabel(day: number) { return ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][day] || '' }
 function businessStatus(hours: BusinessHour[], timezone?: string | null) { if (!hours.length) return { open: false, label: 'График уточняется', detail: 'Часы работы будут опубликованы' }; try { const now = new Date(); const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: timezone || undefined }).format(now); const index = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(weekday); const hour = hours.find((item) => item.day_of_week === index); if (!hour?.is_active || !hour.start_time || !hour.end_time) return { open: false, label: 'Закрыто', detail: 'Сегодня закрыто' }; const parts = new Intl.DateTimeFormat('en-GB', { timeZone: timezone || undefined, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(now); const current = `${parts.find((part) => part.type === 'hour')?.value}:${parts.find((part) => part.type === 'minute')?.value}`; if (current >= hour.start_time.slice(0,5) && current < hour.end_time.slice(0,5)) return { open: true, label: 'Открыто', detail: `Закроется в ${formatTime(hour.end_time)}` }; if (current < hour.start_time.slice(0,5)) return { open: false, label: 'Закрыто', detail: `Откроется в ${formatTime(hour.start_time)}` }; return { open: false, label: 'Закрыто', detail: 'Сегодня закрыто' } } catch { return { open: false, label: 'График уточняется', detail: 'Часы работы будут опубликованы' } } }

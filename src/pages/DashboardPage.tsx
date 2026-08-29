@@ -67,7 +67,8 @@ export function DashboardPage() {
   if (error || !data) return <ErrorState message={error ?? 'Dashboard data is unavailable.'} retry={() => void reload()}/>
 
   return <>
-    <PageHeader title="Good to see you" description="Live operations, not placeholder numbers." action={<Link className="button" to="/admin/bookings">Manage bookings</Link>}/>
+    <PageHeader title="Good to see you" description="Live operations, not placeholder numbers." action={<Link className="button" to="/admin/settings">Open business settings</Link>}/>
+    {!data.currency && <div className="inline-info" style={{ marginBottom: 18 }}>No primary business_settings record yet. Create it under Settings so the public website can publish.</div>}
     <section className="stat-grid">{cards.map(({ label, value, icon: Icon, tone }) => <article className="stat-card" key={label}><span className={`stat-icon tone-${tone}`}><Icon size={19}/></span><div><span>{label}</span><strong>{value}</strong></div></article>)}</section>
     <section className="dashboard-grid">
       <article className="panel panel-wide"><div className="panel-heading"><div><h2>Upcoming bookings</h2><p>Next scheduled appointments</p></div><Link to="/admin/bookings">View all</Link></div>
