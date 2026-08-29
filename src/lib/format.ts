@@ -1,9 +1,9 @@
 export function formatCurrency(value: number | string | null | undefined, currency = ''): string {
   const amount = Number(value ?? 0)
   if (currency && /^[A-Z]{3}$/.test(currency)) {
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency, maximumFractionDigits: 2 }).format(amount)
+    return new Intl.NumberFormat('uz', { style: 'currency', currency, maximumFractionDigits: 2 }).format(amount)
   }
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(amount)
+  return new Intl.NumberFormat('uz', { maximumFractionDigits: 2 }).format(amount)
 }
 
 export function formatDate(value: string | null | undefined): string {
@@ -11,7 +11,7 @@ export function formatDate(value: string | null | undefined): string {
   const parsed = new Date(`${value.length === 10 ? `${value}T00:00:00` : value}`)
   return Number.isNaN(parsed.getTime())
     ? value
-    : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(parsed)
+    : new Intl.DateTimeFormat('uz', { dateStyle: 'medium' }).format(parsed)
 }
 
 export function formatDateTime(value: string | null | undefined): string {
@@ -19,7 +19,7 @@ export function formatDateTime(value: string | null | undefined): string {
   const parsed = new Date(value)
   return Number.isNaN(parsed.getTime())
     ? value
-    : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(parsed)
+    : new Intl.DateTimeFormat('uz', { dateStyle: 'medium', timeStyle: 'short' }).format(parsed)
 }
 
 export function formatTime(value: string | null | undefined): string {
@@ -36,13 +36,35 @@ export function humanize(value: string): string {
   return value.replace(/[._-]/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
-export function errorMessage(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
+const STATUS_LABELS: Record<string, string> = {
+  active: 'Faol',
+  inactive: 'Nofaol',
+  archived: 'Arxivlangan',
+  open: 'Ochiq',
+  closed: 'Yopiq',
+  pending: 'Kutilmoqda',
+  approved: 'Tasdiqlangan',
+  rejected: 'Rad etilgan',
+  hidden: 'Yashirin',
+  confirmed: 'Tasdiqlangan',
+  completed: 'Yakunlangan',
+  cancelled: 'Bekor qilingan',
+  canceled: 'Bekor qilingan',
+  no_show: 'Kelmaslik',
+  upcoming: 'Yaqinlashmoqda',
+}
+
+export function localizeStatus(value: string): string {
+  return STATUS_LABELS[value.toLowerCase()] ?? value
+}
+
+export function errorMessage(error: unknown, fallback = 'Nimadir xato ketdi. Qayta urinib ko‘ring.'): string {
   if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
     const message = error.message
-    if (message.includes('23P01') || /overlap|not available|slot was just taken/i.test(message)) return 'This time slot was just taken. Refresh availability and choose another time.'
-    if (/duplicate key|unique constraint/i.test(message)) return 'A record with this value already exists. Choose a different value.'
-    if (/foreign key|still referenced/i.test(message)) return 'This item is still used by other records. Archive or deactivate it instead.'
-    if (/permission|not authorized|row-level security/i.test(message)) return 'Your account is not authorized for this action.'
+    if (message.includes('23P01') || /overlap|not available|slot was just taken|band qilindi/i.test(message)) return 'Bu vaqt hozirgina band qilindi. Mavjudlikni yangilab, boshqa vaqtni tanlang.'
+    if (/duplicate key|unique constraint/i.test(message)) return 'Bu qiymatga ega yozuv allaqachon mavjud. Boshqa qiymatni tanlang.'
+    if (/foreign key|still referenced/i.test(message)) return 'Bu element boshqa yozuvlarda hali ham ishlatilmoqda. O‘rniga uni arxivlang yoki o‘chiring.'
+    if (/permission|not authorized|row-level security/i.test(message)) return 'Sizning hisobingiz bu amalni bajarishga ruxsatga ega emas.'
     // Application RPCs intentionally raise short, human-readable validation
     // messages. Do not surface unexpected driver/SQL errors to the user.
     if (message.length < 180 && !/sql|postgres|relation|column|syntax/i.test(message)) return message

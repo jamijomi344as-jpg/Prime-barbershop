@@ -1,5 +1,6 @@
 import { AlertCircle, CheckCircle2, LoaderCircle, X } from 'lucide-react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ButtonHTMLAttributes, type PropsWithChildren, type ReactNode } from 'react'
+import { localizeStatus } from '../lib/format'
 
 export function Button({ className = '', children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button className={`button ${className}`} {...props}>{children}</button>
@@ -57,7 +58,7 @@ export function Modal({ title, children, onClose, wide = false }: { title: strin
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section ref={dialog} tabIndex={-1} className={`modal ${wide ? 'modal-wide' : ''}`} role="dialog" aria-modal="true" aria-label={title} onMouseDown={(event) => event.stopPropagation()}>
-        <header className="modal-header"><h2>{title}</h2><button type="button" className="icon-button" onClick={onClose} aria-label="Close dialog"><X size={20} /></button></header>
+        <header className="modal-header"><h2>{title}</h2><button type="button" className="icon-button" onClick={onClose} aria-label="Oynani yopish"><X size={20} /></button></header>
         <div className="modal-body">{children}</div>
       </section>
     </div>
@@ -65,10 +66,10 @@ export function Modal({ title, children, onClose, wide = false }: { title: strin
 }
 
 export function PageHeader({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
-  return <div className="page-header"><div><p className="eyebrow">Admin workspace</p><h1>{title}</h1>{description && <p>{description}</p>}</div>{action && <div className="page-action">{action}</div>}</div>
+  return <div className="page-header"><div><p className="eyebrow">Boshqaruv paneli</p><h1>{title}</h1>{description && <p>{description}</p>}</div>{action && <div className="page-action">{action}</div>}</div>
 }
 
-export function LoadingBlock({ label = 'Loading data…' }: { label?: string }) {
+export function LoadingBlock({ label = 'Ma’lumot yuklanmoqda…' }: { label?: string }) {
   return <div className="loading-block"><LoaderCircle className="spin" size={22} /> {label}</div>
 }
 
@@ -77,15 +78,15 @@ export function EmptyState({ title, description, action }: { title: string; desc
 }
 
 export function ErrorState({ message, retry }: { message: string; retry?: () => void }) {
-  return <div className="error-state"><AlertCircle size={20}/><div><strong>Unable to load this section</strong><p>{message}</p></div>{retry && <SecondaryButton onClick={retry}>Try again</SecondaryButton>}</div>
+  return <div className="error-state"><AlertCircle size={20}/><div><strong>Bu bo‘limni yuklash imkoni bo‘lmadi</strong><p>{message}</p></div>{retry && <SecondaryButton onClick={retry}>Qayta urinish</SecondaryButton>}</div>
 }
 
 export function StatusPill({ value }: { value: string }) {
   const tone = value.toLowerCase().replace(/[_ ]/g, '-')
-  return <span className={`status status-${tone}`}>{value.replace(/_/g, ' ')}</span>
+  return <span className={`status status-${tone}`}>{localizeStatus(value)}</span>
 }
 
-export function ConfirmAction({ title, description, confirmLabel = 'Confirm', onConfirm, children }: { title: string; description: string; confirmLabel?: string; onConfirm: () => Promise<void> | void; children: (open: () => void) => ReactNode }) {
+export function ConfirmAction({ title, description, confirmLabel = 'Tasdiqlash', onConfirm, children }: { title: string; description: string; confirmLabel?: string; onConfirm: () => Promise<void> | void; children: (open: () => void) => ReactNode }) {
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const run = async () => {
@@ -94,6 +95,6 @@ export function ConfirmAction({ title, description, confirmLabel = 'Confirm', on
   }
   return <>
     {children(() => setOpen(true))}
-    {open && <Modal title={title} onClose={() => !busy && setOpen(false)}><p className="modal-copy">{description}</p><div className="form-actions"><SecondaryButton disabled={busy} onClick={() => setOpen(false)}>Keep it</SecondaryButton><Button className="button-danger" disabled={busy} onClick={() => void run()}>{busy ? 'Working…' : confirmLabel}</Button></div></Modal>}
+    {open && <Modal title={title} onClose={() => !busy && setOpen(false)}><p className="modal-copy">{description}</p><div className="form-actions"><SecondaryButton disabled={busy} onClick={() => setOpen(false)}>Bekor qilish</SecondaryButton><Button className="button-danger" disabled={busy} onClick={() => void run()}>{busy ? 'Bajarilmoqda…' : confirmLabel}</Button></div></Modal>}
   </>
 }

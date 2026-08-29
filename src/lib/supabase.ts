@@ -17,7 +17,7 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
 
 export function getSupabase(): SupabaseClient {
   if (!supabase) {
-    throw new Error('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.')
+    throw new Error('Supabase sozlanmagan. VITE_SUPABASE_URL va VITE_SUPABASE_ANON_KEY qiymatlarini qo‘shing.')
   }
   return supabase
 }

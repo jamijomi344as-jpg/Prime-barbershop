@@ -15,7 +15,7 @@ export function useAsyncData<T>(loader: () => Promise<T>, dependencies: unknown[
       const data = await loader()
       setState({ data, loading: false, error: null })
     } catch (error) {
-      setState({ data: null, loading: false, error: error instanceof Error ? error.message : 'Unable to load data.' })
+      setState({ data: null, loading: false, error: error instanceof Error ? error.message : 'Ma’lumotlarni yuklab bo‘lmadi.' })
     }
     // loaders are purposefully supplied by the page that owns its dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
