@@ -7,7 +7,7 @@ import './styles.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ErrorBoundary title="Application failed to start">
+    <ErrorBoundary title="Ilova ishga tushmadi">
       <BrowserRouter>
         <App />
       </BrowserRouter>

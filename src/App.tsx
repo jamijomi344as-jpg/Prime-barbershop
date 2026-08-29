@@ -24,7 +24,7 @@ export function App() {
       <Routes>
         <Route path="/admin/login" element={<AdminLoginRoute />} />
         <Route path="/admin/*" element={<ProtectedAdmin />} />
-        <Route path="/*" element={<ErrorBoundary title="Website could not render"><PublicWebsite /></ErrorBoundary>} />
+        <Route path="/*" element={<ErrorBoundary title="Saytni yuklash imkoni bo‘lmadi"><PublicWebsite /></ErrorBoundary>} />
       </Routes>
     </ToastProvider>
   )
@@ -83,7 +83,7 @@ function useAdminAccess() {
 function AdminLoginRoute() {
   const { access } = useAdminAccess()
   if (!isSupabaseConfigured) return <ConfigurationRequired />
-  if (access === 'loading') return <div className="auth-screen"><LoadingBlock label="Checking admin session…" /></div>
+  if (access === 'loading') return <div className="auth-screen"><LoadingBlock label="Admin sessiyasi tekshirilmoqda…" /></div>
   if (access === 'authorized') return <Navigate to="/admin" replace />
   return <LoginPage />
 }
@@ -113,7 +113,7 @@ function ProtectedAdmin() {
         setUnreadCount((count) => count + 1)
         window.dispatchEvent(new Event('admin-notification-changed'))
         pushToast({
-          title: row.title || 'New notification',
+          title: row.title || 'Yangi bildirishnoma',
           message: row.message,
           tone: 'info',
           action: () => {
@@ -133,17 +133,17 @@ function ProtectedAdmin() {
   const signOut = async () => {
     if (!supabase) return
     const { error } = await supabase.auth.signOut()
-    if (error) pushToast({ title: 'Could not sign out', message: errorMessage(error), tone: 'error' })
+    if (error) pushToast({ title: 'Tizimdan chiqib bo‘lmadi', message: errorMessage(error), tone: 'error' })
     else navigate('/admin/login', { replace: true })
   }
 
   if (!isSupabaseConfigured) return <ConfigurationRequired />
-  if (access === 'loading') return <div className="auth-screen"><LoadingBlock label="Verifying secure admin access…" /></div>
+  if (access === 'loading') return <div className="auth-screen"><LoadingBlock label="Xavfsiz kirish tekshirilmoqda…" /></div>
   if (access === 'unauthenticated') return <Navigate to="/admin/login" replace />
   if (access === 'unauthorized') return <UnauthorizedPage onSignOut={signOut} />
 
   return (
-    <ErrorBoundary title="Admin panel could not render" description="A runtime error stopped the dashboard. Sign-in was successful; the page itself failed.">
+    <ErrorBoundary title="Admin panel yuklanmadi" description="Ishlash jarayonidagi xatolik panelni to‘xtatdi. Tizimga kirish muvaffaqiyatli bo‘ldi, ammo sahifa yuklanmadi.">
       <AdminShell userName={userName} unreadCount={unreadCount} onSignOut={signOut}>
         <AdminRoutes onUnreadChanged={refreshUnread} />
       </AdminShell>
@@ -183,27 +183,27 @@ function LoginPage() {
   const submit = async (event: FormEvent) => {
     event.preventDefault()
     if (!email.trim() || !password) {
-      pushToast({ title: 'Enter email and password', tone: 'error' })
+      pushToast({ title: 'Email va parolni kiriting', tone: 'error' })
       return
     }
     setBusy(true)
     const { error } = await getSupabase().auth.signInWithPassword({ email: email.trim(), password })
     setBusy(false)
-    if (error) pushToast({ title: 'Sign in failed', message: 'Check your credentials and try again.', tone: 'error' })
-    else pushToast({ title: 'Signed in', tone: 'success' })
+    if (error) pushToast({ title: 'Kirish muvaffaqiyatsiz', message: 'Ma’lumotlaringizni tekshirib, qayta urinib ko‘ring.', tone: 'error' })
+    else pushToast({ title: 'Tizimga kirildi', tone: 'success' })
   }
   return (
     <div className="auth-screen">
       <form className="login-card" onSubmit={(event) => void submit(event)}>
         <div className="login-mark"><ShieldCheck size={26} /></div>
-        <p className="eyebrow">Secure access</p>
-        <h1>Admin workspace</h1>
-        <p>Sign in with an account that has the administrator role. There is no public admin registration.</p>
+        <p className="eyebrow">Xavfsiz kirish</p>
+        <h1>Admin paneli</h1>
+        <p>Administrator roli mavjud hisob bilan kiring. Ommaviy admin ro‘yxatdan o‘tish yo‘q.</p>
         {location.state?.message && <div className="inline-info">{String(location.state.message)}</div>}
         <label className="field"><span className="field-label">Email</span><input className="input" autoComplete="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-        <label className="field"><span className="field-label">Password</span><input className="input" autoComplete="current-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-        <Button type="submit" disabled={busy}>{busy ? 'Signing in…' : <><LogIn size={17} /> Sign in</>}</Button>
-        <small>Session access and every database request are independently verified.</small>
+        <label className="field"><span className="field-label">Parol</span><input className="input" autoComplete="current-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+        <Button type="submit" disabled={busy}>{busy ? 'Kirilmoqda…' : <><LogIn size={17} /> Kirish</>}</Button>
+        <small>Sessiyaga kirish va har bir so‘rov alohida tekshiriladi.</small>
       </form>
     </div>
   )
@@ -214,10 +214,10 @@ function UnauthorizedPage({ onSignOut }: { onSignOut: () => Promise<void> }) {
     <div className="auth-screen">
       <div className="login-card unauthorized-card">
         <div className="login-mark warning"><AlertTriangle size={26} /></div>
-        <p className="eyebrow">Access denied</p>
-        <h1>This account is not an administrator</h1>
-        <p>The dashboard has not loaded any protected data. Ask an existing project administrator to verify your role assignment.</p>
-        <Button onClick={() => void onSignOut()}>Sign out</Button>
+        <p className="eyebrow">Kirish rad etildi</p>
+        <h1>Bu hisob administrator emas</h1>
+        <p>Panel himoyalangan ma’lumotlarni yuklamadi. Rolni tekshirish uchun loyiha administratoriga murojaat qiling.</p>
+        <Button onClick={() => void onSignOut()}>Chiqish</Button>
       </div>
     </div>
   )
@@ -228,9 +228,9 @@ function ConfigurationRequired() {
     <div className="auth-screen">
       <div className="login-card unauthorized-card">
         <div className="login-mark warning"><LockKeyhole size={26} /></div>
-        <p className="eyebrow">Admin panel</p>
-        <h1>Supabase configuration or authentication is required.</h1>
-        <p>Add browser-safe <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> in the hosting environment, then sign in with an administrator account. Never add a service role key to this application.</p>
+        <p className="eyebrow">Admin paneli</p>
+        <h1>Supabase sozlamalari yoki autentifikatsiya talab qilinadi.</h1>
+        <p>Xosting muhitida brauzer uchun xavfsiz <code>VITE_SUPABASE_URL</code> va <code>VITE_SUPABASE_ANON_KEY</code> qiymatlarini qo‘shing, so‘ng administrator hisobi bilan kiring. Bu ilovaga hech qachon service role kalitini qo‘shmang.</p>
       </div>
     </div>
   )

@@ -5,8 +5,8 @@ const MAX_ASSET_BYTES = 10 * 1024 * 1024
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/svg+xml']
 
 export async function uploadBusinessAsset(folder: 'logos' | 'favicons' | 'hero' | 'barbers' | 'services' | 'gallery', file: File): Promise<string> {
-  if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) throw new Error('Choose a JPEG, PNG, WebP, AVIF, or SVG image.')
-  if (file.size > MAX_ASSET_BYTES) throw new Error('Image must be 10 MB or smaller.')
+  if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) throw new Error('JPEG, PNG, WebP, AVIF yoki SVG rasmni tanlang.')
+  if (file.size > MAX_ASSET_BYTES) throw new Error('Rasm hajmi 10 MB dan oshmasligi kerak.')
 
   const extension = file.name.split('.').pop()?.toLowerCase() || 'image'
   const path = `${folder}/${crypto.randomUUID()}.${extension}`
