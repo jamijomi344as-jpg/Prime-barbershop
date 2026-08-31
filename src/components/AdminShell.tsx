@@ -54,7 +54,7 @@ export function AdminShell({ children, userName, unreadCount, onSignOut }: { chi
           <button className="collapse-button" onClick={() => setCollapsed((value) => !value)} aria-label="Yig‘ilgan navigatsiyani almashtirish">
             {collapsed ? <ChevronRight size={18}/> : <ChevronLeft size={18}/>}<span>Yig‘ish</span>
           </button>
-          <div className="security-note"><ShieldAlert size={16}/><span>Ma’lumotlar bazasiga kirish RLS bilan himoyalangan.</span></div>
+          <div className="security-note"><ShieldAlert size={16}/><span>Ma’lumotlaringiz xavfsiz saqlanadi.</span></div>
         </div>
       </aside>
       <main className="main-area">
