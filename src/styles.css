@@ -64,3 +64,18 @@ a { color: inherit; text-decoration: none; }
 .footer-social-links { display:flex!important; flex-wrap:wrap; gap:9px; margin-top:5px; }
 button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline:3px solid rgba(217,184,125,.8); outline-offset:3px; }
 .booking-search { display:block; width:100%; margin:13px 0 8px; }
+
+/* Customer review submission */
+.reviews-heading-row { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:30px; }
+.reviews-heading-row .section-heading { margin-bottom:0; }
+.review-form { display:grid; gap:20px; min-width:min(520px,75vw); }
+.review-form label { display:grid; gap:7px; color:#d9ddd5; font-size:12px; font-weight:700; }
+.review-form select,.review-form textarea { width:100%; padding:11px 12px; color:#edf0e9; border:1px solid #3c413a; border-radius:9px; outline:none; background:#1c1e1b; font:inherit; }
+.review-form select:focus,.review-form textarea:focus { border-color:#d9b87d; }
+.review-form label small { justify-self:end; color:#8e968b; font-weight:400; }
+.review-form fieldset { margin:0; padding:0; border:0; }
+.review-form legend { margin-bottom:7px; color:#d9ddd5; font-size:12px; font-weight:700; }
+.review-rating { display:flex; gap:4px; }
+.review-rating button { padding:3px; color:#666b63; border:0; background:transparent; }
+.review-rating button.selected { color:#e5ba6a; }
+@media (max-width:600px) { .reviews-heading-row { align-items:flex-start; flex-direction:column; } .review-form { min-width:0; } }
